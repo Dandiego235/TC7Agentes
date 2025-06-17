@@ -1,0 +1,7 @@
+langchain[openai]
+langchain-openai
+langchain-chroma
+langchain-tavily
+python-dotenv
+langgraph
+langgraph_supervisor
