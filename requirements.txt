@@ -4,4 +4,7 @@ langchain-chroma
 langchain-tavily
 python-dotenv
 langgraph
-langgraph_supervisor
+langgraph-supervisor
+langchain-community
+arxiv
+asknews

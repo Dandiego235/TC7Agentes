@@ -1,7 +1,17 @@
+from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 from langgraph_supervisor import create_supervisor
+from langchain_tavily import TavilySearch
+from langchain_community.agent_toolkits.load_tools import load_tools
+from langchain_community.tools.asknews import AskNewsSearch
 
+load_dotenv()
+
+
+tools_list = load_tools(["arxiv"])
+tavilySearchTool = TavilySearch(max_results=3)
+askNewsTool = AskNewsSearch(max_results=2)
 
 math_assistent = create_react_agent(
     model="openai:gpt-4o-mini",
@@ -14,7 +24,17 @@ math_assistent = create_react_agent(
 
 history_assistant = create_react_agent(
     model="openai:gpt-4o-mini",
-    tools=[],
+    tools=[tavilySearchTool, askNewsTool],
+    prompt="Usted es un asistente experto en historia."
+    "Responda a las preguntas de los usuarios de manera clara y concisa."
+    "Explique el contexto histórico y los eventos relevantes."
+    "Utilice la búsqueda en línea para proporcionar información actualizada y precisa.",
+    name="history_assistant",
+)
+
+science_assistant = create_react_agent(
+    model="openai:gpt-4o-mini",
+    tools=[tavilySearchTool] + tools_list,
     prompt="Usted es un asistente experto en historia."
     "Responda a las preguntas de los usuarios de manera clara y concisa."
     "Explique el contexto histórico y los eventos relevantes.",
@@ -32,8 +52,9 @@ spanish_assistant = create_react_agent(
 
 recommender_assistant = create_react_agent(
     model="openai:gpt-4o-mini",
-    tools=[],
+    tools=[tavilySearchTool] + tools_list,
     prompt="Usted es un asistente experto en recomendaciones de recursos educativos y académicos."
+    "Identifique las necesidades de aprendizaje del usuario y proporcione recursos adecuados."
     "Proporcione recomendaciones personalizadas basadas en las preferencias del usuario."
     "Considere libros, artículos, páginas web, videos y otros recursos relevantes para el aprendizaje.",
     name="recommender_assistant",
@@ -61,8 +82,8 @@ def stream_graph_updates(user_input: str):
     for event in supervisor.stream(
         {"messages": [{"role": "user", "content": user_input}]}
     ):
-        for value in event.values():
-            print("Assistant:", value["messages"][-1].content)
+        print(event)
+        print("\n")
 
 
 while True:
