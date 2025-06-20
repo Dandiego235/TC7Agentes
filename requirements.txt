@@ -7,4 +7,4 @@ langgraph
 langgraph-supervisor
 langchain-community
 arxiv
-asknews
+wikipedia
