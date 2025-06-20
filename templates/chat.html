@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Chat</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='website.css') }}">
+    <script>
+        async function sendMessage() {
+            const message = document.getElementById("userInput").value;
+            const chatBox = document.getElementById("chatBox");
+
+            // Display user's prompt
+            const userPrompt = document.createElement("p");
+            userPrompt.textContent = "User: " + message;
+            userPrompt.className = "user-message";
+            chatBox.appendChild(userPrompt);
+
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message })
+            });
+            const data = await response.json();
+            if (data.responses) {
+                data.responses.forEach(res => {
+                    const assistantResponse = document.createElement("div");
+                    assistantResponse.innerHTML = "Assistant: " + res; // Render HTML safely
+                    assistantResponse.className = "assistant-message";
+                    chatBox.appendChild(assistantResponse);
+                });
+            } else {
+                const errorMessage = document.createElement("p");
+                errorMessage.textContent = "Error: " + data.error;
+                errorMessage.className = "error-message";
+                chatBox.appendChild(errorMessage);
+            }
+            document.getElementById("userInput").value = ""; // Clear input field
+        }
+    </script>
+</head>
+<body>
+    <p class="heading">Agente educativo</p>
+    <div class="form-grid">
+        <div class="textarea" id="chatBox"></div>
+        <form id="input-form" method="post" onsubmit="event.preventDefault(); sendMessage();">
+            <textarea class="text-box" id="userInput" placeholder="Type your message here..."></textarea>
+            <button class="send-button" type="submit">Send</button>
+        </form>
+    </div>
+</body>
+</html>

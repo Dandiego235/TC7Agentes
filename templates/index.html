@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <title>SHARI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;500;700;800&family=Open+Sans:wght@300;500;700&family=Roboto:wght@100;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='Chat/website.css')}}"
+    />
+    <script>
+      function resizeTextarea(element) {
+        element.style.height = "auto"; // Reset the height to auto
+        element.style.height = element.scrollHeight + "px"; // Set the height to the content's scroll height
+      }
+    </script>
+
+    <script src="{{ url_for('static', filename='Chat/saveConversation.js')}}"></script>
+    <script src="{{ url_for('static', filename='Chat/saveContext.js')}}"></script>
+    <script src="{{ url_for('static', filename='Chat/roll.js')}}"></script>
+  </head>
+  <body>
+    <p class="heading">You can now chat with an AI Game Master. Have fun!</p>
+    {% with messages = get_flashed_messages() %} {% if messages %} {% for
+    message in messages %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <span>{{message}}</span>
+      <button
+        type="button"
+        class="close"
+        data-dismiss="alert"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %} {% endif %} {% endwith %}
+
+    <div class="form-grid">
+      <div class="textarea" id="textAI">{{ content | safe }}</div>
+      {% if roleplay %}
+      <form id="input-form" method="post" action="">
+        <textarea
+          class="text-box"
+          id="playerTextarea"
+          oninput="resizeTextarea(this)"
+          placeholder="Type your message here..."
+          name="input_text"
+        ></textarea>
+        <button class="send-button" type="submit">Send</button>
+      </form>
+      {% else %} {% if not gameOver %}
+      <div class="roll-grid">
+        <form id="no-roll-form" method="post">
+          <button id="no-roll-button" class="send-button" type="submit">
+            No roll, I changed my mind
+          </button>
+        </form>
+        <form id="roll-form" method="post">
+          <button id="roll-button" class="send-button" type="submit">
+            Roll
+          </button>
+          {% if devMode %}
+          <input
+            type="number"
+            id="roll-input"
+            name="roll"
+            min="1"
+            max="6"
+            placeholder="1-6"
+          />
+          {% endif %}
+        </form>
+      </div>
+      {% else %}
+      <form id="restart-form" method="post" action="/play_again">
+        <button
+          id="play-again-button"
+          class="send-button"
+          type="submit"
+          style="margin-top: 15px"
+        >
+          Play again!
+        </button>
+      </form>
+      {% endif %} {% endif %}
+    </div>
+
+    <div class="button-container">
+      <button class="save-button" onClick="saveConversation()">
+        Save Conversation
+      </button>
+      <button class="edit-button" onClick="openPopup()">Edit History</button>
+      <a href="signout"><button class="signout-button">Sign Out</button></a>
+    </div>
+
+    <div class="popup" id="popup">
+      <h2 id="popupError">Edit History</h2>
+      <p class="popupText" id="popupText">
+        Edit the message history and current location
+      </p>
+      <div class="popup-form">
+        <form id="edit-form" method="post">
+          <textarea
+            id="editTextarea"
+            placeholder="Edit the message history and current location here..."
+            onkeydown="handleTab(event)"
+            name="context"
+          >
+{{ context }}</textarea
+          >
+          <button type="submit" onclick="saveContext()">Save</button>
+        </form>
+      </div>
+      <button onClick="downloadContext()">Download</button>
+    </div>
+
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      // Hace que el text area donde se despliega el chat se enfoque en la parte inferior.
+      const textAI = document.getElementById("textAI");
+      window.addEventListener("load", function (event) {
+        textAI.scrollTop = textAI.scrollHeight;
+      });
+    </script>
+    {% if roleplay %}
+    <script>
+      document
+        .getElementById("playerTextarea")
+        .addEventListener("keydown", function (event) {
+          if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault(); // Prevent the default Enter key behavior (line break)
+            document.getElementById("input-form").submit(); // Submit the form
+          }
+        });
+    </script>
+    {% else %}
+    <script>
+      const noRollForm = document.getElementById("no-roll-form");
+
+      noRollForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        let hiddenInput = document.createElement("input");
+        hiddenInput.setAttribute("type", "hidden");
+        hiddenInput.setAttribute("name", "input_text");
+        hiddenInput.setAttribute(
+          "value",
+          "I changed my mind, I don't want to roll."
+        );
+        noRollForm.appendChild(hiddenInput);
+
+        noRollForm.submit();
+      });
+    </script>
+    {% if devMode %}
+    <script>
+      const rollFormDev = document.getElementById("roll-form");
+      const rollInput = document.getElementById("roll-input");
+      rollFormDev.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          return false;
+        }
+      });
+      rollFormDev.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        let hiddenInput = document.createElement("input");
+        console.log(rollInput.value);
+        let roll = parseInt(rollInput.value);
+        if (isNaN(roll)) {
+          roll = roll1d6();
+        }
+        console.log(roll);
+        hiddenInput.setAttribute("type", "hidden");
+        hiddenInput.setAttribute("name", "input_text");
+        hiddenInput.setAttribute("value", `I rolled a ${roll}.`);
+        rollFormDev.appendChild(hiddenInput);
+
+        rollFormDev.submit();
+      });
+    </script>
+    {% else %}
+    <script>
+      const rollForm = document.getElementById("roll-form");
+      rollForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        let hiddenInput = document.createElement("input");
+
+        roll = roll1d6();
+        hiddenInput.setAttribute("type", "hidden");
+        hiddenInput.setAttribute("name", "input_text");
+        hiddenInput.setAttribute("value", `I rolled a ${roll}.`);
+        rollForm.appendChild(hiddenInput);
+
+        rollForm.submit();
+      });
+    </script>
+    {% endif %} {% endif %}
+    <script>
+      function highlightTextarea() {
+        var textarea = document.getElementById("editTextarea");
+        textarea.focus();
+        textarea.select();
+      }
+
+      let popup = document.getElementById("popup");
+
+      function openPopup() {
+        popup.classList.add("open-popup");
+        highlightTextarea();
+      }
+
+      function closePopup() {
+        popup.classList.remove("open-popup");
+      }
+    </script>
+    <script>
+      textarea = document.getElementById("editTextarea");
+      function handleTab(event) {
+        if (event.key === "Tab") {
+          event.preventDefault();
+
+          // Get the current cursor position
+          var start = textarea.selectionStart;
+          var end = textarea.selectionEnd;
+
+          // Insert a tab character at the cursor position
+          textarea.value =
+            textarea.value.substring(0, start) +
+            "\t" +
+            textarea.value.substring(end);
+
+          // Move the cursor position after the inserted tab
+          textarea.selectionStart = textarea.selectionEnd = start + 1;
+        }
+      }
+    </script>
+    <script>
+      if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+      }
+    </script>
+  </body>
+</html>
