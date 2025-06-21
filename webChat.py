@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request, jsonify
 from agent import supervisor
 from markdown import markdown
+from langchain_core.messages import HumanMessage
 
 app = Flask(__name__)
 config = {"configurable": {"thread_id": "abc123"}}
+
+responses = []
 
 @app.route("/")
 def index():
@@ -16,13 +19,31 @@ def chat():
         return jsonify({"error": "No message provided"}), 400
 
     try:
+        events = []
         responses = []
         for event in supervisor.stream(
             {"messages": [{"role": "user", "content": user_input}]}, config
-        ):
-            for value in event.values():
-                for message in value["messages"]:
-                    responses.append(markdown(message.text()))
+        ):  
+            print(event)
+            print("\n")
+            events.append(event)
+            # for value in event.values():
+            #     responses.append(markdown(value["messages"][-1].text()))
+                # if "messages" in value:
+                #     for message in value["messages"]:
+                #         responses.append(markdown(message.text()))
+                # else:
+                #     # Handle case where messages might not be present
+                #     responses.append("No response available.")
+        event = events[-1] if events else None
+        for value in event.values():
+            for message in value["messages"]:
+                if isinstance(message, HumanMessage):
+                    responses.append({"role": "user-message", "message": "Usuario: " + markdown(message.text())})
+                else:
+                    if markdown(message.text()) != "":
+                        responses.append({"role": "assistant-message", "message": "Asistente: " + markdown(message.text())}) 
+            
         return jsonify({"responses": responses})
     except Exception as e:
         return jsonify({"error": str(e)}), 500

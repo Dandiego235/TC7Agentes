@@ -9,13 +9,6 @@
     <script>
         async function sendMessage() {
             const message = document.getElementById("userInput").value;
-            const chatBox = document.getElementById("chatBox");
-
-            // Display user's prompt
-            const userPrompt = document.createElement("p");
-            userPrompt.textContent = "User: " + message;
-            userPrompt.className = "user-message";
-            chatBox.appendChild(userPrompt);
 
             const response = await fetch("/chat", {
                 method: "POST",
@@ -26,13 +19,17 @@
             });
             const data = await response.json();
             if (data.responses) {
+                const chatBox = document.getElementById("chatBox");
+                chatBox.innerHTML = ""; // Clear previous content
                 data.responses.forEach(res => {
                     const assistantResponse = document.createElement("div");
-                    assistantResponse.innerHTML = "Assistant: " + res; // Render HTML safely
-                    assistantResponse.className = "assistant-message";
+                    assistantResponse.innerHTML = res.message; // Render HTML safely
+                    assistantResponse.className = res.role;
                     chatBox.appendChild(assistantResponse);
                 });
             } else {
+                const chatBox = document.getElementById("chatBox");
+                chatBox.innerHTML = ""; // Clear previous content
                 const errorMessage = document.createElement("p");
                 errorMessage.textContent = "Error: " + data.error;
                 errorMessage.className = "error-message";
@@ -50,6 +47,9 @@
             <textarea class="text-box" id="userInput" placeholder="Type your message here..."></textarea>
             <button class="send-button" type="submit">Send</button>
         </form>
+    </div>
+</body>
+</html>
     </div>
 </body>
 </html>
