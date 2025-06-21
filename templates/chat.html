@@ -21,11 +21,16 @@
             if (data.responses) {
                 const chatBox = document.getElementById("chatBox");
                 chatBox.innerHTML = ""; // Clear previous content
-                data.responses.forEach(res => {
+                data.responses.forEach((res, index) => {
                     const assistantResponse = document.createElement("div");
-                    assistantResponse.innerHTML = res.message; // Render HTML safely
-                    assistantResponse.className = res.role;
+                    assistantResponse.innerHTML = res; // Render HTML safely
+                    assistantResponse.className = "assistant-message";
                     chatBox.appendChild(assistantResponse);
+
+                    // Set focus to the last message
+                    if (index === data.responses.length - 1) {
+                        assistantResponse.scrollIntoView({ behavior: "smooth" });
+                    }
                 });
             } else {
                 const chatBox = document.getElementById("chatBox");
@@ -34,6 +39,7 @@
                 errorMessage.textContent = "Error: " + data.error;
                 errorMessage.className = "error-message";
                 chatBox.appendChild(errorMessage);
+                errorMessage.scrollIntoView({ behavior: "smooth" }); // Focus on error message
             }
             document.getElementById("userInput").value = ""; // Clear input field
         }
@@ -47,9 +53,6 @@
             <textarea class="text-box" id="userInput" rows="3" placeholder="Type your message here..."></textarea>
             <button class="send-button" type="submit">Send</button>
         </form>
-    </div>
-</body>
-</html>
     </div>
 </body>
 </html>
