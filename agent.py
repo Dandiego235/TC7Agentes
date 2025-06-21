@@ -82,7 +82,7 @@ supervisor = create_supervisor(
         rag_agent,
     ],
     model=ChatOpenAI(model="gpt-4o-mini"),
-    prompt="Usted es un supervisor de agentes de para un tutor académico especializado."
+    prompt="Usted es un supervisor de agentes para un tutor académico especializado."
     "Supervise las respuestas de los agentes y dirija al usuario al agente adecuado según la pregunta."
     "Si la pregunta es sobre matemáticas, dirija al agente de matemáticas."
     "Si la pregunta es sobre ciencias, dirija al agente de ciencias."

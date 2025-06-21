@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, jsonify
 from agent import supervisor
+from markdown import markdown
 
 app = Flask(__name__)
+config = {"configurable": {"thread_id": "abc123"}}
 
 @app.route("/")
 def index():
@@ -16,10 +18,11 @@ def chat():
     try:
         responses = []
         for event in supervisor.stream(
-            {"messages": [{"role": "user", "content": user_input}]}
+            {"messages": [{"role": "user", "content": user_input}]}, config
         ):
             for value in event.values():
-                responses.append(value["messages"][-1].content)
+                for message in value["messages"]:
+                    responses.append(markdown(message.text()))
         return jsonify({"responses": responses})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
