@@ -7,9 +7,12 @@ from langchain_community.agent_toolkits.load_tools import load_tools
 from langchain_community.tools import WikipediaQueryRun
 from langchain_community.utilities import WikipediaAPIWrapper
 from langgraph.checkpoint.memory import MemorySaver
-from langchain_community.document_loaders import PyPDFLoader
+from rag import rag_agent
+import os
 
 load_dotenv()
+
+print(os.environ.get("USER_AGENT"))
 
 
 tools_list = load_tools(["arxiv"])
@@ -76,6 +79,7 @@ supervisor = create_supervisor(
         spanish_assistant,
         science_assistant,
         recommender_assistant,
+        rag_agent,
     ],
     model=ChatOpenAI(model="gpt-4o-mini"),
     prompt="Usted es un supervisor de agentes para un tutor académico especializado."
@@ -85,6 +89,7 @@ supervisor = create_supervisor(
     "Si la pregunta es sobre historia, dirija al agente de historia."
     "Si la pregunta es sobre español, dirija al agente de español."
     "Si la pregunta es sobre recomendaciones de recursos educativos, dirija al agente de recomendaciones."
+    "Si la pregunta es sobre un documento PDF, URL o sitio web, dirija al agente de RAG (Retrieval Augmented Generation)."
     "Si la pregunta no es clara o no se puede responder, pida al usuario que aclare su pregunta.",
 ).compile(checkpointer=MemorySaver())
 
@@ -95,10 +100,13 @@ config = {"configurable": {"thread_id": "abc123"}}
 def stream_graph_updates(user_input: str):
     global config
     for event in supervisor.stream(
-        {"messages": [{"role": "user", "content": user_input}]}, config
+        {"messages": [{"role": "user", "content": user_input}]},
+        stream_mode="values",
+        config=config,
     ):
-        print(event)
+        event["messages"][-1].pretty_print()
         print("\n")
+
 
 if __name__ == "__main__":
     while True:

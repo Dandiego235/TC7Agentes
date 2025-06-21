@@ -9,4 +9,5 @@ langchain-community
 arxiv
 wikipedia
 flask
+beautifulsoup4
 markdown
