@@ -66,7 +66,8 @@ recommender_assistant = create_react_agent(
     prompt="Usted es un asistente experto en recomendaciones de recursos educativos y académicos."
     "Identifique las necesidades de aprendizaje del usuario y proporcione recursos adecuados."
     "Proporcione recomendaciones personalizadas basadas en las preferencias del usuario."
-    "Considere libros, artículos, páginas web, videos y otros recursos relevantes para el aprendizaje.",
+    "Considere libros, artículos, páginas web, videos y otros recursos relevantes para el aprendizaje."
+    "Si el usuario solicita recomendaciones de artículos académicos, utilice la herramienta de búsqueda de Arxiv para encontrar artículos relevantes.",
     name="recommender_assistant",
     checkpointer=MemorySaver(),
 )
