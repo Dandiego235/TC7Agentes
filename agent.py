@@ -89,6 +89,7 @@ supervisor = create_supervisor(
     "Si la pregunta es sobre historia, dirija al agente de historia."
     "Si la pregunta es sobre español, dirija al agente de español."
     "Si la pregunta es sobre recomendaciones de recursos educativos, dirija al agente de recomendaciones."
+    "Si la pregunta es sobre un documento PDF, URL o sitio web, dirija al agente de RAG (Retrieval Augmented Generation)."
     "Si la pregunta no es clara o no se puede responder, pida al usuario que aclare su pregunta.",
 ).compile(checkpointer=MemorySaver())
 

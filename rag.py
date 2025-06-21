@@ -38,7 +38,7 @@ def process_pdf(file_path: str):
 def process_website(url: str):
     global vector_store, embeddings
 
-    loader = WebBaseLoader(web_paths=(url,), bs_kwargs={"features": "lxml"})
+    loader = WebBaseLoader(web_paths=(url,))
 
     docs = loader.load()
 
@@ -57,8 +57,15 @@ def ingest_website(url: str):
     """
     Ingests a website and adds its content to the vector store.
     """
-    process_website(url)
-    return f"Website {url} has been ingested successfully."
+    try:
+        process_website(url)
+        return f"Website {url} has been ingested successfully."
+    except Exception as e:
+        print(f"Error ingesting website {url}: {e}")
+        import traceback
+
+        traceback.print_exc()
+        return f"Failed to ingest website {url}. Error: {e}"
 
 
 @tool(response_format="content_and_artifact")
