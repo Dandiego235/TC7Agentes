@@ -19,7 +19,7 @@ def index():
 def chat():
     user_input = request.json.get("message")
     if not user_input:
-        return jsonify({"error": "No message provided"}), 400
+        return jsonify({"error": "No se brindó un mensaje"}), 400
 
     try:
         events = []

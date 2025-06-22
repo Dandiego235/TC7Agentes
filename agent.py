@@ -118,8 +118,7 @@ if __name__ == "__main__":
                 break
             stream_graph_updates(user_input)
         except:
-            # fallback if input() is not available
-            user_input = input()  # "What do you know about LangGraph?"
+            user_input = input()
             print("User: " + user_input)
             stream_graph_updates(user_input)
             break

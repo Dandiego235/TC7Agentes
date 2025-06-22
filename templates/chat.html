@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Chat</title>
+    <title>TECGPT</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='website.css') }}">
     <script>
@@ -20,37 +20,38 @@
             const data = await response.json();
             if (data.responses) {
                 const chatBox = document.getElementById("chatBox");
-                chatBox.innerHTML = ""; // Clear previous content
+                chatBox.innerHTML = ""; // Borrar contenido anterior
                 data.responses.forEach((res, index) => {
                     const assistantResponse = document.createElement("div");
-                    assistantResponse.innerHTML = res; // Render HTML safely
-                    assistantResponse.className = "assistant-message";
+                    assistantResponse.innerHTML = res.message; // Cargar el HTML
+                    assistantResponse.className = res.role;
+
                     chatBox.appendChild(assistantResponse);
 
-                    // Set focus to the last message
+                    // Se desplaza al final del chat solo si es la última respuesta
                     if (index === data.responses.length - 1) {
                         assistantResponse.scrollIntoView({ behavior: "smooth" });
                     }
                 });
             } else {
                 const chatBox = document.getElementById("chatBox");
-                chatBox.innerHTML = ""; // Clear previous content
+                chatBox.innerHTML = ""; // Se limpia el chat antes de mostrar el error
                 const errorMessage = document.createElement("p");
                 errorMessage.textContent = "Error: " + data.error;
                 errorMessage.className = "error-message";
                 chatBox.appendChild(errorMessage);
-                errorMessage.scrollIntoView({ behavior: "smooth" }); // Focus on error message
+                errorMessage.scrollIntoView({ behavior: "smooth" });
             }
-            document.getElementById("userInput").value = ""; // Clear input field
+            document.getElementById("userInput").value = ""; // Se limpia el campo de entrada
         }
     </script>
 </head>
 <body>
-    <p class="heading">Agente educativo</p>
+    <p class="heading">TECGPT</p>
     <div class="form-grid">
         <div class="textarea" id="chatBox"></div>
         <form id="input-form" method="post" onsubmit="event.preventDefault(); sendMessage();">
-            <textarea class="text-box" id="userInput" rows="3" placeholder="Type your message here..."></textarea>
+            <textarea class="text-box" id="userInput" rows="3" placeholder="Escriba su mensaje aquí..."></textarea>
             <button class="send-button" type="submit">Send</button>
         </form>
     </div>
