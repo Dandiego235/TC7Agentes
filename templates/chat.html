@@ -1,59 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TECGPT</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='website.css') }}">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='website.css') }}"
+    />
     <script>
-        async function sendMessage() {
-            const message = document.getElementById("userInput").value;
+      async function sendMessage() {
+        const message = document.getElementById("userInput").value;
 
-            const response = await fetch("/chat", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ message })
-            });
-            const data = await response.json();
-            if (data.responses) {
-                const chatBox = document.getElementById("chatBox");
-                chatBox.innerHTML = ""; // Borrar contenido anterior
-                data.responses.forEach((res, index) => {
-                    const assistantResponse = document.createElement("div");
-                    assistantResponse.innerHTML = res.message; // Cargar el HTML
-                    assistantResponse.className = res.role;
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message }),
+        });
+        const data = await response.json();
+        if (data.responses) {
+          const chatBox = document.getElementById("chatBox");
+          chatBox.innerHTML = ""; // Borrar contenido anterior
+          data.responses.forEach((res, index) => {
+            const assistantResponse = document.createElement("div");
+            assistantResponse.innerHTML = res.message; // Cargar el HTML
+            assistantResponse.className = res.role;
 
-                    chatBox.appendChild(assistantResponse);
+            chatBox.appendChild(assistantResponse);
 
-                    // Se desplaza al final del chat solo si es la última respuesta
-                    if (index === data.responses.length - 1) {
-                        assistantResponse.scrollIntoView({ behavior: "smooth" });
-                    }
-                });
-            } else {
-                const chatBox = document.getElementById("chatBox");
-                chatBox.innerHTML = ""; // Se limpia el chat antes de mostrar el error
-                const errorMessage = document.createElement("p");
-                errorMessage.textContent = "Error: " + data.error;
-                errorMessage.className = "error-message";
-                chatBox.appendChild(errorMessage);
-                errorMessage.scrollIntoView({ behavior: "smooth" });
+            // Se desplaza al final del chat solo si es la última respuesta
+            if (index === data.responses.length - 1) {
+              assistantResponse.scrollIntoView({ behavior: "smooth" });
             }
-            document.getElementById("userInput").value = ""; // Se limpia el campo de entrada
+          });
+        } else {
+          const chatBox = document.getElementById("chatBox");
+          chatBox.innerHTML = ""; // Se limpia el chat antes de mostrar el error
+          const errorMessage = document.createElement("p");
+          errorMessage.textContent = "Error: " + data.error;
+          errorMessage.className = "error-message";
+          chatBox.appendChild(errorMessage);
+          errorMessage.scrollIntoView({ behavior: "smooth" });
         }
+        document.getElementById("userInput").value = ""; // Se limpia el campo de entrada
+      }
+
+      async function uploadPDF() {
+        const input = document.getElementById("pdfPathInput");
+        const filePath = input.value.trim();
+        if (!filePath) {
+          return;
+        }
+
+        const response = await fetch("/ingest_pdf", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ file_path: filePath }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          alert("PDF enviado y procesado.");
+        } else {
+          alert("Error al procesar el PDF.");
+        }
+
+        input.value = "";
+      }
     </script>
-</head>
-<body>
-    <p class="heading">TECGPT</p>
+  </head>
+  <body>
+    <p class="heading">TecGPT</p>
     <div class="form-grid">
-        <div class="textarea" id="chatBox"></div>
-        <form id="input-form" method="post" onsubmit="event.preventDefault(); sendMessage();">
-            <textarea class="text-box" id="userInput" rows="3" placeholder="Escriba su mensaje aquí..."></textarea>
-            <button class="send-button" type="submit">Send</button>
-        </form>
+      <div class="textarea" id="chatBox"></div>
+      <form
+        id="input-form"
+        method="post"
+        onsubmit="event.preventDefault(); sendMessage();"
+      >
+        <textarea
+          class="text-box"
+          id="userInput"
+          rows="3"
+          placeholder="Escriba su mensaje aquí..."
+        ></textarea>
+        <button class="send-button" type="submit">Enviar</button>
+      </form>
     </div>
-</body>
+    <form
+      id="pdf-form"
+      enctype="multipart/form-data"
+      onsubmit="event.preventDefault(); uploadPDF();"
+      class="pdf-form-inline"
+    >
+      <input
+        type="text"
+        id="pdfPathInput"
+        placeholder="Ingrese la ruta completa del PDF, ej: C:\\Users\\usuario\\archivo.pdf"
+        class="form-control"
+        style="margin-bottom: 8px"
+        class="pdf-input"
+      />
+      <button type="submit" class="pdf-button">Subir PDF</button>
+    </form>
+  </body>
 </html>

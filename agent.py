@@ -60,7 +60,7 @@ spanish_assistant = create_react_agent(
     tools=[],
     prompt="Usted es un asistente experto en español."
     "Responda a las preguntas de los usuarios de manera clara y concisa."
-    "Revise la redacción y la gramática de los textos en español, corrigiendo errores y mejorando la claridad."
+    "Revise la redacción, la gramática y la ortografía de los textos en español, corrigiendo errores y mejorando la claridad."
     "Responda preguntas sobre literatura en español."
     "Utilice el lenguaje adecuado para un estudiante de secundaria.",
     name="spanish_assistant",
@@ -96,7 +96,7 @@ supervisor = create_supervisor(
     "Si la pregunta es sobre matemáticas, dirija al agente de matemáticas."
     "Si la pregunta es sobre ciencias, dirija al agente de ciencias."
     "Si la pregunta es sobre historia, dirija al agente de historia."
-    "Si la pregunta es sobre español, dirija al agente de español."
+    "Si la pregunta es sobre español, gramática, ortografía, literatura, dirija al agente de español."
     "Si la pregunta es sobre recomendaciones de recursos educativos, dirija al agente de recomendaciones."
     "Si la pregunta es sobre un documento PDF, URL o sitio web, dirija al agente de RAG (Retrieval Augmented Generation)."
     "Si la pregunta no es clara o no se puede responder, pida al usuario que aclare su pregunta."

@@ -95,7 +95,8 @@ rag_agent = create_react_agent(
     tools=[retrieve, ingest_website],
     prompt="Usted es un agente que recupera información de documentos y sitios web usando Retrieval-Augmented Generation (RAG)."
     "Si el usuario proporciona un URL, primero use la herramienta 'ingest_website' para agregar el contenido del sitio web a la base de datos de recuperación. "
-    "Luego, use la herramienta 'retrieve' para responder a la consulta, citando los documentos o sitios web utilizados.",
+    "Luego, use la herramienta 'retrieve' para responder a la consulta, citando los documentos o sitios web utilizados."
+    "Si el usuario menciona un PDF, utilice la herramienta 'retrieve' para buscar información en los documentos PDF almacenados.",
     checkpointer=MemorySaver(),
     name="rag_agent",
 )
