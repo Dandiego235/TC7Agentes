@@ -11,6 +11,8 @@ import bs4
 
 load_dotenv()
 
+# Código realizado con base en los tutoriales de LangGraph y LangChain:
+# ‌Build a Retrieval Augmented Generation (RAG) App: Part 2. (n.d.). LangChain. Recuperado el 23 de junio, 2025, de https://python.langchain.com/docs/tutorials/qa_chat_history/
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 vector_store = Chroma(
     collection_name="pdfs",
@@ -20,6 +22,7 @@ vector_store = Chroma(
 
 
 def process_pdf(file_path: str):
+    """Procesa un archivo PDF y lo agrega al Chroma vector store."""
     global vector_store, embeddings
     loader = PyPDFLoader(file_path)
 
@@ -36,6 +39,7 @@ def process_pdf(file_path: str):
 
 
 def process_website(url: str):
+    """Procesa un sitio web y lo agrega al Chroma vector store."""
     global vector_store, embeddings
 
     loader = WebBaseLoader(web_paths=(url,))
@@ -55,7 +59,7 @@ def process_website(url: str):
 @tool(response_format="content")
 def ingest_website(url: str):
     """
-    Ingests a website and adds its content to the vector store.
+    Herramienta que ingesta un sitio web y agrega su contenido al vector store.
     """
     try:
         process_website(url)
@@ -71,8 +75,8 @@ def ingest_website(url: str):
 @tool(response_format="content_and_artifact")
 def retrieve(query: str):
     """
-    Retrieves documents from the vector store based on the query.
-    Returns the content of the retrieved documents and their metadata.
+    Recupera documentos del vector store basados en la consulta.
+    Devuelve el contenido de los documentos recuperados y sus metadatos.
     """
     retrieved_docs = vector_store.similarity_search(query, k=3)
     serialized = "\n\n".join(
