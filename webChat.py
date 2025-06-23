@@ -12,14 +12,14 @@ responses = []
 
 @app.route("/")
 def index():
-    return render_template("chat.html")  # Render the chat interface
+    return render_template("chat.html") # Cargar la página
 
 
 @app.route("/chat", methods=["POST"])
 def chat():
     user_input = request.json.get("message")
     if not user_input:
-        return jsonify({"error": "No message provided"}), 400
+        return jsonify({"error": "No se brindó un mensaje"}), 400
 
     try:
         events = []
@@ -30,14 +30,6 @@ def chat():
             pprint(event)
             print("\n")
             events.append(event)
-            # for value in event.values():
-            #     responses.append(markdown(value["messages"][-1].text()))
-            # if "messages" in value:
-            #     for message in value["messages"]:
-            #         responses.append(markdown(message.text()))
-            # else:
-            #     # Handle case where messages might not be present
-            #     responses.append("No response available.")
         event = events[-1] if events else None
         for value in event.values():
             for message in value["messages"]:
