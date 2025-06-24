@@ -107,7 +107,7 @@ config = {"configurable": {"thread_id": "abc123"}}
 
 def stream_graph_updates(user_input: str):
     global config
-    for event in history_assistant.stream(
+    for event in supervisor.stream(
         {"messages": [{"role": "user", "content": user_input}]},
         stream_mode="values",
         config=config,
@@ -138,7 +138,6 @@ if __name__ == "__main__":
     img = rag_agent.get_graph().draw_mermaid_png()
     with open("images/rag_agent_graph.png", "wb") as f:
         f.write(img)
-    input()
     while True:
         try:
             user_input = input("User: ")
