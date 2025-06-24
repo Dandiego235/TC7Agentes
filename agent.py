@@ -8,7 +8,6 @@ from langchain_community.tools import WikipediaQueryRun
 from langchain_community.utilities import WikipediaAPIWrapper
 from langgraph.checkpoint.memory import MemorySaver
 from rag import rag_agent
-from IPython.display import Image, display
 import os
 
 load_dotenv()
