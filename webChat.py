@@ -25,7 +25,7 @@ def ingest_pdf():
     if file_path[0] == '"' and file_path[-1] == '"':
         file_path = file_path[1:-1]
     try:
-        process_pdf(file_path)  # Asegurarse de que la ruta sea compatible con Unix
+        process_pdf(file_path)
         return jsonify({"message": f"PDF procesado: {file_path}"})
     except Exception as e:
         print(f"Error procesando PDF {file_path}: {e}")
