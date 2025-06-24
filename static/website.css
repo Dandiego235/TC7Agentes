@@ -26,9 +26,7 @@ body,
   border-radius: 10px;
   padding: 15px;
   resize: none;
-  /* Prevent resizing of the textarea */
   overflow: auto;
-  /* Show scrollbar when content overflows */
   font-family: "Inter", "Open Sans", "Roboto", Arial;
   font-size: 16px;
   line-height: 20px;
@@ -255,11 +253,11 @@ textarea {
 
 .button-container {
   position: absolute;
-  bottom: 10px; /* Adjust the bottom distance as needed */
-  right: 10px; /* Adjust the right distance as needed */
+  bottom: 10px;
+  right: 10px;
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Adjust the gap between buttons as needed */
+  gap: 10px;
 }
 
 .button-container button {
@@ -293,7 +291,7 @@ textarea {
 .pdf-form-inline {
   display: flex;
   align-items: center;
-  gap: 10px; /* space between input and button */
+  gap: 10px;
   margin-top: 30px;
   width: 800px;
 }
