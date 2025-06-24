@@ -3,7 +3,6 @@ from agent import supervisor
 from rag import process_pdf
 from markdown import markdown
 from langchain_core.messages import HumanMessage
-from pprint import pprint
 
 app = Flask(__name__)
 config = {"configurable": {"thread_id": "abc123"}}
@@ -48,7 +47,6 @@ def chat():
             print(event)
             print("\n")
             events.append(event)
-        print("Eventos de la conversación:")
         event = events[-1] if events else None
         for value in event.values():
             for message in value["messages"]:

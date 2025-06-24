@@ -86,7 +86,7 @@ def retrieve(query: str):
     return serialized, retrieved_docs
 
 
-llm = init_chat_model("openai:gpt-4o-mini")
+llm = init_chat_model("openai:gpt-4o")
 
 tools = ToolNode([retrieve, ingest_website])
 

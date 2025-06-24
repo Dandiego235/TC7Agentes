@@ -13,8 +13,6 @@ import os
 
 load_dotenv()
 
-print(os.environ.get("USER_AGENT"))
-
 # Código realizado con base en los tutoriales de LangGraph y LangChain:
 # ‌Build an Agent. (n.d.). LangChain. Recuperado el 23 de junio, 2025, de https://python.langchain.com/docs/tutorials/agents/
 tools_list = load_tools(["arxiv"])
@@ -22,7 +20,7 @@ tavily_search_tool = TavilySearch(max_results=3)
 wikipedia_tool = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
 
 math_assistent = create_react_agent(
-    model="openai:gpt-4o-mini",
+    model="openai:gpt-4o",
     tools=[],
     prompt="Usted es un asistente experto en matemáticas."
     "Responda a las preguntas de los usuarios de manera clara y concisa."
@@ -33,7 +31,7 @@ math_assistent = create_react_agent(
 )
 
 history_assistant = create_react_agent(
-    model="openai:gpt-4o-mini",
+    model="openai:gpt-4o",
     tools=[tavily_search_tool, wikipedia_tool],
     prompt="Usted es un asistente experto en historia."
     "Responda a las preguntas de los usuarios de manera clara y concisa."
@@ -45,7 +43,7 @@ history_assistant = create_react_agent(
 )
 
 science_assistant = create_react_agent(
-    model="openai:gpt-4o-mini",
+    model="openai:gpt-4o",
     tools=[tavily_search_tool, wikipedia_tool] + tools_list,
     prompt="Usted es un asistente experto en ciencias."
     "Responda a las preguntas de los usuarios de manera clara y concisa."
@@ -56,7 +54,7 @@ science_assistant = create_react_agent(
 )
 
 spanish_assistant = create_react_agent(
-    model="openai:gpt-4o-mini",
+    model="openai:gpt-4o",
     tools=[],
     prompt="Usted es un asistente experto en español."
     "Responda a las preguntas de los usuarios de manera clara y concisa."
@@ -68,7 +66,7 @@ spanish_assistant = create_react_agent(
 )
 
 recommender_assistant = create_react_agent(
-    model="openai:gpt-4o-mini",
+    model="openai:gpt-4o",
     tools=[tavily_search_tool, wikipedia_tool] + tools_list,
     prompt="Usted es un asistente experto en recomendaciones de recursos educativos y académicos."
     "Identifique las necesidades de aprendizaje del usuario y proporcione recursos adecuados."
@@ -90,7 +88,7 @@ supervisor = create_supervisor(
         recommender_assistant,
         rag_agent,
     ],
-    model=ChatOpenAI(model="gpt-4o-mini"),
+    model=ChatOpenAI(model="gpt-4o"),
     prompt="Usted es un supervisor de agentes para un tutor académico especializado."
     "Supervise las respuestas de los agentes y dirija al usuario al agente adecuado según la pregunta."
     "Si la pregunta es sobre matemáticas, dirija al agente de matemáticas."
@@ -98,7 +96,7 @@ supervisor = create_supervisor(
     "Si la pregunta es sobre historia, dirija al agente de historia."
     "Si la pregunta es sobre español, gramática, ortografía, literatura, dirija al agente de español."
     "Si la pregunta es sobre recomendaciones de recursos educativos, dirija al agente de recomendaciones."
-    "Si la pregunta es sobre un documento PDF, URL o sitio web, dirija al agente de RAG (Retrieval Augmented Generation)."
+    "Si la pregunta es sobre un documento PDF o incluye un URL o enlace a un sitio web, dirija al agente de RAG (Retrieval Augmented Generation)."
     "Si la pregunta no es clara o no se puede responder, pida al usuario que aclare su pregunta."
     "Utilice el lenguaje adecuado para un estudiante de secundaria.",
 ).compile(checkpointer=MemorySaver())
